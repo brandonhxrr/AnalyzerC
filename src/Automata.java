@@ -88,6 +88,10 @@ public class Automata {
                     }
                 break;
                 case 6:
+                    if(isNumber(symbol, 10)){
+                        state = 7;
+                    }
+                break;
                 case 7:
                     if(!isNumber(symbol, 10)){
                         state = 17;
@@ -104,12 +108,12 @@ public class Automata {
                     }
                 break;
                 case 10:
-                    if(Character.isLetterOrDigit(symbol) || symbol == '-' || symbol == '$'){
+                    if(Character.isLetterOrDigit(symbol) || symbol == '_' || symbol == '$'){
                         state = 11;
                     }
                 break;
                 case 11:
-                    if(!Character.isLetterOrDigit(symbol) && symbol != '-' && symbol != '$'){
+                    if(!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$'){
                         state = 17;
                     }
                 break;
@@ -145,6 +149,23 @@ public class Automata {
 
     public static void main(String[] args){
         //Tests
-        System.out.println("State: " + validateString("-123.42E-6"));
+        System.out.println("State1: " + validateString("/*Este es un comentario de varias lineas\nOtra linea*/"));
+        System.out.println("State2: " + validateString("//Este es un comentario de una linea\nOtra linea"));
+        System.out.println("State3: " + validateString("//Este es un comentario de una linea"));
+        System.out.println("State4: " + validateString("java34"));
+        System.out.println("State5: " + validateString("__"));
+        System.out.println("State6: " + validateString("_65"));
+        System.out.println("State7: " + validateString("java es cool"));
+        System.out.println("State8: " + validateString("123"));
+        System.out.println("State9: " + validateString("076"));
+        System.out.println("State10: " + validateString("098"));
+        System.out.println("State11: " + validateString("0xFA"));
+        System.out.println("State11: " + validateString("0xJK"));
+        System.out.println("State13: " + validateString("1.24"));
+        System.out.println("State14: " + validateString("+1.24"));
+        System.out.println("State15: " + validateString("+1.24E"));
+        System.out.println("State16: " + validateString("+1.024"));
+        System.out.println("State17: " + validateString("+1.24E-"));
+        System.out.println("State18: " + validateString("+1.24E-8"));
     }
 }

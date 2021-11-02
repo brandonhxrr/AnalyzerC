@@ -37,20 +37,20 @@ public class Automata {
                     }else if ( symbol == '+' || symbol == '-'){
                         state = 2;
                     }else if(symbol == '_'){
-                        state = 11;
-                    }else if(Character.isLetter(symbol)){
                         state = 10;
+                    }else if(Character.isLetter(symbol)){
+                        state = 11;
                     }else if(symbol == '/'){
-                        state = 13;
+                        state = 12;
                     }else{
-                        state = 18; // Dead state
+                        state = 17; // Dead state
                     }
                 break;
                 case 1:
                     if(symbol == '.'){
                         state = 4;
                     }else if (!isNumber(symbol, 10)){
-                        state = 18;
+                        state = 17;
                     }
                 break;
                 case 2:
@@ -59,7 +59,7 @@ public class Automata {
                     }else if (isNumber(symbol, 10)){
                         state = 1;
                     }else{
-                        state = 18;
+                        state = 17;
                     }
                 break;
                 case 3:
@@ -68,14 +68,14 @@ public class Automata {
                     }else if (isNumber(symbol, 8)){
                         state = 8;
                     }else{
-                        state = 18;
+                        state = 17;
                     }
                 break;
                 case 4:
                     if(symbol == 'E'){
                         state = 5;
                     }else if (!isNumber(symbol, 10)){
-                        state = 18;
+                        state = 17;
                     }
                 break;
                 case 5:
@@ -84,13 +84,55 @@ public class Automata {
                     }else if(isNumber(symbol, 10)){
                         state = 7;
                     }else{
-                        state = 18;
+                        state = 17;
                     }
                 break;
                 case 6:
                 case 7:
                     if(!isNumber(symbol, 10)){
-                        state = 18;
+                        state = 17;
+                    }
+                break;
+                case 8:
+                    if(!isNumber(symbol, 8)){
+                        state = 17;
+                    }
+                break;
+                case 9:
+                    if(!isNumber(symbol, 16)){
+                        state = 17;
+                    }
+                break;
+                case 10:
+                    if(Character.isLetterOrDigit(symbol) || symbol == '-' || symbol == '$'){
+                        state = 11;
+                    }
+                break;
+                case 11:
+                    if(!Character.isLetterOrDigit(symbol) && symbol != '-' && symbol != '$'){
+                        state = 17;
+                    }
+                break;
+                case 12:
+                    if(symbol == '/'){
+                        state = 13;
+                    }else if(symbol == '*'){
+                        state = 14;
+                    }
+                    break;
+                case 14:
+                    if(symbol == '*'){
+                        state = 15;
+                    }
+                break;
+                case 15:
+                    if(symbol == '/'){
+                        state = 16;
+                    }
+                break;
+                case 16:
+                    if(!Character.isWhitespace(symbol)){
+                        state = 0;
                     }
                 break;
             }

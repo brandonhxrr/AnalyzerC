@@ -88,34 +88,22 @@ public class Automata {
                     }
                 break;
                 case 6:
-                    if(isNumber(symbol, 10)){
-                        state = 7;
-                    }
+                    state = isNumber(symbol, 10) ? 7 : 6 ;
                 break;
                 case 7:
-                    if(!isNumber(symbol, 10)){
-                        state = 17;
-                    }
+                    state = !isNumber(symbol, 10) ? 17 : 7 ;
                 break;
                 case 8:
-                    if(!isNumber(symbol, 8)){
-                        state = 17;
-                    }
+                    state = !isNumber(symbol, 8) ? 17 : 8 ;
                 break;
                 case 9:
-                    if(!isNumber(symbol, 16)){
-                        state = 17;
-                    }
+                    state = !isNumber(symbol, 16) ? 17 : 9 ;
                 break;
                 case 10:
-                    if(Character.isLetterOrDigit(symbol) || symbol == '_' || symbol == '$'){
-                        state = 11;
-                    }
+                    state = (Character.isLetterOrDigit(symbol) || symbol == '_' || symbol == '$') ? 11 : 10 ;
                 break;
                 case 11:
-                    if(!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$'){
-                        state = 17;
-                    }
+                    state = (!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$') ? 17 : 11;
                 break;
                 case 12:
                     if(symbol == '/'){
@@ -125,19 +113,13 @@ public class Automata {
                     }
                     break;
                 case 14:
-                    if(symbol == '*'){
-                        state = 15;
-                    }
+                    state = symbol == '*' ? 15 : 14 ;
                 break;
                 case 15:
-                    if(symbol == '/'){
-                        state = 16;
-                    }
+                    state = symbol == '/' ? 16 : 15 ;
                 break;
                 case 16:
-                    if(!Character.isWhitespace(symbol)){
-                        state = 0;
-                    }
+                    state = !Character.isWhitespace(symbol) ? 0 : 16 ;
                 break;
             }
 

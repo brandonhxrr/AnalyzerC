@@ -30,16 +30,51 @@ public class Automata {
 
             switch (state){
                 case 0:
-                    if(symbol == '+' || symbol == '-'){
-                        state = 0;
-                    }else if(symbol == '0'){
+                    if(symbol == '0'){
+                        state = 3;
+                    }else if (isNumber(symbol, 10)){
+                        state = 1;
+                    }else if ( symbol == '+' || symbol == '-'){
                         state = 2;
+                    }
+                break;
+                case 1:
+                    if(symbol == '.'){
+                        state = 4;
+                    }
+                break;
+                case 2:
+                    if(symbol == '0'){
+                        state = 3;
                     }else if (isNumber(symbol, 10)){
                         state = 1;
                     }
                 break;
-                case 1:
-                    //Code for state 1 transition
+                case 3:
+                    if(symbol == 'x'){
+                        state = 9;
+                    }else if (isNumber(symbol, 8)){
+                        state = 8;
+                    }
+                break;
+                case 4:
+                    if(symbol == 'E'){
+                        state = 5;
+                    }
+                break;
+                case 5:
+                    if ( symbol == '+' || symbol == '-'){
+                        state = 6;
+                    }else if(isNumber(symbol, 10)){
+                        state = 7;
+                    }
+                break;
+                case 6:
+                    if(isNumber(symbol, 10)){
+                        state = 7;
+                    }
+                break;
+                case 7:
                 break;
             }
 
@@ -51,6 +86,6 @@ public class Automata {
 
     public static void main(String[] args){
         //Tests
-        System.out.println("State: " + validateString("123"));
+        System.out.println("State: " + validateString("-123.42E-6"));
     }
 }

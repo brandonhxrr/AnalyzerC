@@ -36,11 +36,21 @@ public class Automata {
                         state = 1;
                     }else if ( symbol == '+' || symbol == '-'){
                         state = 2;
+                    }else if(symbol == '_'){
+                        state = 11;
+                    }else if(Character.isLetter(symbol)){
+                        state = 10;
+                    }else if(symbol == '/'){
+                        state = 13;
+                    }else{
+                        state = 18; // Dead state
                     }
                 break;
                 case 1:
                     if(symbol == '.'){
                         state = 4;
+                    }else if (!isNumber(symbol, 10)){
+                        state = 18;
                     }
                 break;
                 case 2:
@@ -48,6 +58,8 @@ public class Automata {
                         state = 3;
                     }else if (isNumber(symbol, 10)){
                         state = 1;
+                    }else{
+                        state = 18;
                     }
                 break;
                 case 3:
@@ -55,11 +67,15 @@ public class Automata {
                         state = 9;
                     }else if (isNumber(symbol, 8)){
                         state = 8;
+                    }else{
+                        state = 18;
                     }
                 break;
                 case 4:
                     if(symbol == 'E'){
                         state = 5;
+                    }else if (!isNumber(symbol, 10)){
+                        state = 18;
                     }
                 break;
                 case 5:
@@ -67,14 +83,15 @@ public class Automata {
                         state = 6;
                     }else if(isNumber(symbol, 10)){
                         state = 7;
+                    }else{
+                        state = 18;
                     }
                 break;
                 case 6:
-                    if(isNumber(symbol, 10)){
-                        state = 7;
-                    }
-                break;
                 case 7:
+                    if(!isNumber(symbol, 10)){
+                        state = 18;
+                    }
                 break;
             }
 

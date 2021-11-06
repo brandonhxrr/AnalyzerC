@@ -1,4 +1,48 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 public class Automata {
+
+    static boolean isClosed(String str){
+        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', '\"', '\'');
+        for(Character c: symbols) {
+            if(str.charAt(0) == c || str.charAt(str.length() -1) == c){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean isSymbol(String str){
+        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', '\"', '\'', '=', '+', '-',
+        '/', '*', '&', '|', '!', '>', '<');
+        for(Character c: symbols) {
+            if(str.equals(String.valueOf(c))){
+                return true;
+            }
+        }
+        return false;
+    }
+    static boolean isKeyword(String str){
+        List<String> keywords = Arrays.asList("String", "abstract", "continue", "for", "new", "switch" +
+                "assert", "default", "goto", "package", "synchronized",
+                "boolean", "do", "if", "private", "this",
+                "break", "double", "implements", "protected", "throw" ,
+                "byte", "else", "import", "public", "throws" ,
+                "case", "enum", "instanceof", "return", "transient" ,
+                "catch", "extends", "int", "short", "try" +
+                "char", "final", "interface", "static", "void" ,
+                "class", "finally", "long", "strictfp", "volatile" ,
+                "const", "float", "native", "super", "while");
+        for (String kw: keywords) {
+            if(str.equals(kw)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     static String convert(int num, int base){
         int x = num % base;
@@ -24,7 +68,7 @@ public class Automata {
         int state = 0, index = 0;
         char symbol = ' ';
 
-        while(symbol != ';' && index != (str.length() )){
+        while(symbol != ';' && symbol != ',' && index != (str.length() )){
 
             symbol = str.charAt(index);
 
@@ -112,6 +156,9 @@ public class Automata {
                         state = 14;
                     }
                     break;
+                case 13:
+                case 17:
+                    break;
                 case 14:
                     state = symbol == '*' ? 15 : 14 ;
                 break;
@@ -120,6 +167,9 @@ public class Automata {
                 break;
                 case 16:
                     state = !Character.isWhitespace(symbol) ? 0 : 16 ;
+                break;
+                default:
+                    state = 100;
                 break;
             }
 
@@ -149,5 +199,6 @@ public class Automata {
         System.out.println("State16: " + validateString("+1.024"));
         System.out.println("State17: " + validateString("+1.24E-"));
         System.out.println("State18: " + validateString("+1.24E-8"));
+        System.out.println("State19: " + validateString("main(String[]"));
     }
 }

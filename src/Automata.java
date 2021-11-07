@@ -4,7 +4,7 @@ import java.util.List;
 public class Automata {
 
     static String unresolvedWords(String str){
-        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']');
+        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', '\'', '\"', ',', ';');
         for(Character c: symbols) {
             if(str.charAt(0) == c){
                 return str.substring(1);
@@ -12,7 +12,7 @@ public class Automata {
                 return str.substring(0, str.length() - 1 );
             }
         }
-        if(str.charAt(0) == '\'' || str.charAt(0) == '\"' || str.charAt(str.length() -1) == '\'' || str.charAt(str.length() -1) == '\"'){
+        if(str.charAt(0) == '\'' || str.charAt(0) == '\"'){
             return "";
         }
 
@@ -22,7 +22,7 @@ public class Automata {
     static boolean isSymbol(String str){
         List<String> symbols = Arrays.asList("(", ")", "{", "}", "[", "]", "\"", "\"", "=", "+", "-",
         "/", "*", "&", "|", "!", ">", "<", "++", "--", "*=", "+=", "-=", "/=", ">=", "<=",
-                "=*", "=+", "=-", "=/");
+                "=*", "=+", "=-", "=/", ",");
         for(String symbol: symbols) {
             if(str.equals(symbol)){
                 return true;
@@ -40,7 +40,7 @@ public class Automata {
                 "catch", "extends", "int", "short", "try" +
                 "char", "final", "interface", "static", "void" ,
                 "class", "finally", "long", "strictfp", "volatile" ,
-                "const", "float", "native", "super", "while", "System.out.println", "main(String[]");
+                "const", "float", "native", "super", "while", "System.out.println", "main(String[]", "(float)");
         for (String kw: keywords) {
             if(str.equals(kw)){
                 return true;
@@ -73,7 +73,7 @@ public class Automata {
         int state = 0, index = 0;
         char symbol = ' ';
 
-        while(symbol != ';' && symbol != ',' && index != (str.length() )){
+        while(index != (str.length() )){
 
             symbol = str.charAt(index);
 
@@ -98,6 +98,8 @@ public class Automata {
                 case 1:
                     if(symbol == '.'){
                         state = 4;
+                    }else if(symbol == ' '){
+                        state = 0;
                     }else if (!isNumber(symbol, 10)){
                         state = 17;
                     }
@@ -116,6 +118,8 @@ public class Automata {
                         state = 9;
                     }else if (symbol == '.'){
                         state = 4;
+                    }else if(symbol == ' '){
+                        state = 0;
                     }else if (isNumber(symbol, 8)){
                         state = 8;
                     }else{
@@ -125,6 +129,8 @@ public class Automata {
                 case 4:
                     if(symbol == 'E'){
                         state = 5;
+                    }else if(symbol == ' '){
+                        state = 0;
                     }else if (!isNumber(symbol, 10)){
                         state = 17;
                     }
@@ -140,17 +146,33 @@ public class Automata {
                 break;
                 case 6:
                 case 7:
-                    state = !isNumber(symbol, 10) ? 17 : 7 ;
+                    if(symbol == ' '){
+                        state = 0;
+                    }else{
+                        state = !isNumber(symbol, 10) ? 17 : 7 ;
+                    }
                 break;
                 case 8:
-                    state = !isNumber(symbol, 8) ? 17 : 8 ;
+                    if(symbol == ' '){
+                        state = 0;
+                    }else{
+                        state = !isNumber(symbol, 8) ? 17 : 8 ;
+                    }
                 break;
                 case 9:
-                    state = !isNumber(symbol, 16) ? 17 : 9 ;
+                    if(symbol == ' '){
+                        state = 0;
+                    }else{
+                        state = !isNumber(symbol, 16) ? 17 : 9 ;
+                    }
                 break;
                 case 10:
                 case 11:
-                    state = (!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$') ? 17 : 11;
+                    if(symbol == ' '){
+                        state = 0;
+                    }else{
+                        state = (!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$') ? 17 : 11;
+                    }
                 break;
                 case 12:
                     if(symbol == '/'){
@@ -160,6 +182,10 @@ public class Automata {
                     }
                     break;
                 case 13:
+                    if(symbol == ' '){
+                        state = 0;
+                    }
+                    break;
                 case 17:
                     break;
                 case 14:
@@ -169,13 +195,16 @@ public class Automata {
                     state = symbol == '/' ? 16 : 15 ;
                 break;
                 case 16:
-                    state = !Character.isWhitespace(symbol) ? 0 : 16 ;
+                    if(symbol == ' '){
+                        state = 0;
+                    }else{
+                        state = !Character.isWhitespace(symbol) ? 0 : 16 ;
+                    }
                 break;
             }
 
             index++;
         }
-
         return state;
     }
 
@@ -201,6 +230,6 @@ public class Automata {
         System.out.println("State18: " + validateString("+1.24E-8"));
         System.out.println("State19: " + validateString("$"));
         System.out.println("State19: " + validateString("$$$"));
-        System.out.println("State19: " + validateString("$a"));
+        System.out.println("State19: " + validateString("octal1 -0123 octal2 0371;"));
     }
 }

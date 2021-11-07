@@ -6,7 +6,6 @@
 
 
 public class EjemploPracticaAnalizador {
-
     public static void main(String[] args) {
         int octal1 = -0123, octal2 = 0381;
         short dato = 12A12;

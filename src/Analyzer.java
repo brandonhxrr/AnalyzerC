@@ -5,14 +5,19 @@ import java.util.Scanner;
 public class Analyzer {
     public static void readFile(String path){
         String next;
+        int line = 1;
         try{
             File file = new File(path);
             Scanner sc = new Scanner(file);
             while(sc.hasNextLine()){
-                next = sc.nextLine();
+
+                next = filter(sc.nextLine());
+
                 if(!next.isBlank()){
-                    analyze(next);
+                    System.out.print(next + "\t");
+                    System.out.println("Linea: " + String.valueOf(line) + " Estado: " + String.valueOf(Automata.validateString(next)));
                 }
+                line++;
             }
             sc.close();
         }catch(FileNotFoundException e){
@@ -20,22 +25,19 @@ public class Analyzer {
         } //Return file or scanner and make other function that pass the next() value to the automaton
     }
 
-    public static void analyze(String line){
+    public static String filter(String line){
         StringBuilder newLine = new StringBuilder();
-        String aux = "";
         String[] words = line.split(" ");
         for (String word: words) {
-            if(!Automata.isSymbol(word) && !Automata.isKeyword(word) && !word.isBlank()){
-                aux = Automata.unresolvedWords(word);
-                newLine.append(" ").append(aux);
+            if(!word.isBlank() && !Automata.isSymbol(word) && !Automata.isKeyword(word)){
+                newLine.append(" ").append(Automata.unresolvedWords(word));
             }
         }
-        System.out.println(String.valueOf(newLine).trim());
-
+        return String.valueOf(newLine).trim();
     }
 
     public static void main(String[] args) {
-        readFile("C:\\Users\\Brand\\IdeaProjects\\Analyzer\\src\\EjemploPracticaAnalizador.txt");
+        readFile("src/EjemploPracticaAnalizador.txt");
     }
 
 }

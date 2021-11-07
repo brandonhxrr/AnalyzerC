@@ -14,11 +14,11 @@ public class EjemploPracticaAnalizador {
         float prom = (float) 0.0;
         double val;
         /* Calculos generales */
-        for (int i = 0; i < 100; i++) {
+        for ( int i = 0; i < 100; i ++ ) {
             prom += i;
         }
         double pot = 7.34E+1.4;
         val = CteGrav * dato * pot;
-        System.out.println("Prom = " + (prom / PI) + "Result = " + (val * 0xAxB) );
+        System.out.println ( "Prom = " + ( prom / PI ) + "Result = " + (val * 0xAxB) );
     }
 }

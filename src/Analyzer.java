@@ -4,23 +4,34 @@ import java.util.Scanner;
 
 public class Analyzer {
     public static void readFile(String path){
-        //Add code to read files
         String next;
         try{
             File file = new File(path);
             Scanner sc = new Scanner(file);
-            while(sc.hasNext()){
-                next = sc.next();
-                if(!Automata.isSymbol(next) && !Automata.isKeyword(next)){
-                    System.out.println(next);
+            while(sc.hasNextLine()){
+                next = sc.nextLine();
+                if(!next.isBlank()){
+                    analyze(next);
                 }
-
             }
             sc.close();
         }catch(FileNotFoundException e){
-
             System.out.println("Archivo no encontrado");
         } //Return file or scanner and make other function that pass the next() value to the automaton
+    }
+
+    public static void analyze(String line){
+        StringBuilder newLine = new StringBuilder();
+        String aux = "";
+        String[] words = line.split(" ");
+        for (String word: words) {
+            if(!Automata.isSymbol(word) && !Automata.isKeyword(word) && !word.isBlank()){
+                aux = Automata.unresolvedWords(word);
+                newLine.append(" ").append(aux);
+            }
+        }
+        System.out.println(String.valueOf(newLine).trim());
+
     }
 
     public static void main(String[] args) {

@@ -1,25 +1,30 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class Automata {
 
-    static boolean isClosed(String str){
-        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', '\"', '\'');
+    static String unresolvedWords(String str){
+        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']');
         for(Character c: symbols) {
-            if(str.charAt(0) == c || str.charAt(str.length() -1) == c){
-                return true;
+            if(str.charAt(0) == c){
+                return str.substring(1);
+            }else if(str.charAt(str.length() -1) == c){
+                return str.substring(0, str.length() - 1 );
             }
         }
-        return false;
+        if(str.charAt(0) == '\'' || str.charAt(0) == '\"' || str.charAt(str.length() -1) == '\'' || str.charAt(str.length() -1) == '\"'){
+            return "";
+        }
+
+        return str;
     }
 
     static boolean isSymbol(String str){
-        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', '\"', '\'', '=', '+', '-',
-        '/', '*', '&', '|', '!', '>', '<');
-        for(Character c: symbols) {
-            if(str.equals(String.valueOf(c))){
+        List<String> symbols = Arrays.asList("(", ")", "{", "}", "[", "]", "\"", "\"", "=", "+", "-",
+        "/", "*", "&", "|", "!", ">", "<", "++", "--", "*=", "+=", "-=", "/=", ">=", "<=",
+                "=*", "=+", "=-", "=/");
+        for(String symbol: symbols) {
+            if(str.equals(symbol)){
                 return true;
             }
         }
@@ -35,7 +40,7 @@ public class Automata {
                 "catch", "extends", "int", "short", "try" +
                 "char", "final", "interface", "static", "void" ,
                 "class", "finally", "long", "strictfp", "volatile" ,
-                "const", "float", "native", "super", "while");
+                "const", "float", "native", "super", "while", "System.out.println", "main(String[]");
         for (String kw: keywords) {
             if(str.equals(kw)){
                 return true;
@@ -82,7 +87,7 @@ public class Automata {
                         state = 2;
                     }else if(symbol == '_'){
                         state = 10;
-                    }else if(Character.isLetter(symbol)){
+                    }else if(Character.isLetter(symbol) || symbol == '$'){
                         state = 11;
                     }else if(symbol == '/'){
                         state = 12;
@@ -109,6 +114,8 @@ public class Automata {
                 case 3:
                     if(symbol == 'x'){
                         state = 9;
+                    }else if (symbol == '.'){
+                        state = 4;
                     }else if (isNumber(symbol, 8)){
                         state = 8;
                     }else{
@@ -132,8 +139,6 @@ public class Automata {
                     }
                 break;
                 case 6:
-                    state = isNumber(symbol, 10) ? 7 : 6 ;
-                break;
                 case 7:
                     state = !isNumber(symbol, 10) ? 17 : 7 ;
                 break;
@@ -144,8 +149,6 @@ public class Automata {
                     state = !isNumber(symbol, 16) ? 17 : 9 ;
                 break;
                 case 10:
-                    state = (Character.isLetterOrDigit(symbol) || symbol == '_' || symbol == '$') ? 11 : 10 ;
-                break;
                 case 11:
                     state = (!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$') ? 17 : 11;
                 break;
@@ -167,9 +170,6 @@ public class Automata {
                 break;
                 case 16:
                     state = !Character.isWhitespace(symbol) ? 0 : 16 ;
-                break;
-                default:
-                    state = 100;
                 break;
             }
 
@@ -199,6 +199,8 @@ public class Automata {
         System.out.println("State16: " + validateString("+1.024"));
         System.out.println("State17: " + validateString("+1.24E-"));
         System.out.println("State18: " + validateString("+1.24E-8"));
-        System.out.println("State19: " + validateString("main(String[]"));
+        System.out.println("State19: " + validateString("$"));
+        System.out.println("State19: " + validateString("$$$"));
+        System.out.println("State19: " + validateString("$a"));
     }
 }

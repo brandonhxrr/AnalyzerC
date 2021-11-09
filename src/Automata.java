@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class Automata {
 
     static int validateString(String str, int initial){
@@ -114,10 +117,6 @@ public class Automata {
                     }
                     break;
                 case 13:
-                    if(symbol == ' '){
-                        state = 0;
-                    }
-                    break;
                 case 17:
                     break;
                 case 14:
@@ -138,6 +137,16 @@ public class Automata {
             index++;
         }
         return state;
+    }
+
+    static boolean isAcceptingState(int state){
+        List<Integer> acceptingStates = Arrays.asList(1, 4, 7, 11, 13, 16);
+        for(Integer aState: acceptingStates) {
+            if(state == aState){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args){

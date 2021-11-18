@@ -1,3 +1,5 @@
+package Analyzer;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -140,7 +142,7 @@ public class Automata {
     }
 
     static boolean isAcceptingState(int state){
-        List<Integer> acceptingStates = Arrays.asList(1, 4, 7, 11, 13, 16);
+        List<Integer> acceptingStates = Arrays.asList(1, 4, 7, 8, 9, 11, 13, 16);
         for(Integer aState: acceptingStates) {
             if(state == aState){
                 return true;

@@ -1,3 +1,5 @@
+package Analyzer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -33,13 +35,13 @@ public class Analyzer {
                 }
                 line++;
             }
-            if(ca != cc) acceptingStates.add(line);
+            if(ca != cc) acceptingStates.add(line - 1);
 
             System.out.println("CA: " + ca + " CC: " + cc);
             sc.close();
         }catch(FileNotFoundException e){
             System.out.println("Archivo no encontrado");
-        } //Return file or scanner and make other function that pass the next() value to the automaton
+        }
         return acceptingStates;
     }
 

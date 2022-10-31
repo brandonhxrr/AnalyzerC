@@ -1,5 +1,6 @@
 package Analyzer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,15 +10,27 @@ public class Automata {
 
         int state = initial, index = 0;
         char symbol;
+        
+        String token = "";
 
         while(index != (str.length() )){
 
             symbol = str.charAt(index);
+            token += symbol;
+            System.out.println("Estado: " + state);
 
             switch (state){
                 case 0:
                     if(symbol == '0'){
                         state = 3;
+                    }else if(symbol == '#') {
+                        state = 18;
+                    }else if(symbol == ' ') {
+                        state = 0;
+                    }else if(symbol == ';') {
+                        state = 22;
+                    }else if(symbol == '"') {
+                        state = 27;
                     }else if (Filter.isNumber(symbol, 10)){
                         state = 1;
                     }else if ( symbol == '+' || symbol == '-'){
@@ -108,7 +121,8 @@ public class Automata {
                     if(symbol == ' '){
                         state = 0;
                     }else{
-                        state = (!Character.isLetterOrDigit(symbol) && symbol != '_' && symbol != '$') ? 17 : 11;
+                        System.out.println(symbol);
+                        state = (!Character.isLetterOrDigit(symbol) && symbol != '_' ) ? 17 : 11;
                     }
                 break;
                 case 12:
@@ -134,15 +148,89 @@ public class Automata {
                         state = !Character.isWhitespace(symbol) ? 0 : 16 ;
                     }
                 break;
+                case 18:
+                    System.out.println("Str: " + str + " index: " + index);
+                    
+                    if(str.contains("include")){
+                        index += 6;
+                        token += "nclude";
+                        state = 19;
+                    }else if(str.contains("define")){
+                        index += 5;
+                        token += "efine";
+                        state = 20;
+                    }
+                break;
+                case 19:
+                    if(symbol == '<'){
+                        state = 21;
+                    }else if(symbol == ' ') {
+                        state = 19;
+                    }else {
+                        state = 17;
+                    }
+                break;
+                case 20:
+                    System.out.println("/Str: " + str + " index: " + index);
+                    //validar identificador define
+                    state = (symbol == ' ') ? 23 : 17;
+                break;
+                case 21:
+                    if(Character.isAlphabetic(symbol)){
+                        state = 21;
+                    }else if(symbol == '>'){
+                        state = 22;
+                        Analyzer.tokens.add(token);
+                        token = "";
+                    }
+                break;
+                case 22:
+                    System.out.println("ACEP");
+                break;
+                
+                case 23:
+                    if( symbol == ' '){
+                        state = 24;
+                    }else {
+                        state = (Character.isLetterOrDigit(symbol) || symbol == '_' ) ? 23 : 17;
+                    }
+                    
+                break;
+                case 24:
+                    if(symbol == '"'){
+                        state = 25;
+                    }else if(Character.isDigit(symbol)) {
+                        state = 26;
+                    }
+                break;
+                case 25:
+                    if(symbol == '"') {
+                        state = 22;
+                        Analyzer.tokens.add(token);
+                    }else {
+                        state = (Character.isLetterOrDigit(symbol) || symbol == '_' ) ? 25 : 17;
+                    }
+                    
+                    break;
+                case 26:
+                    state = (Character.isDigit(symbol)) ? 26 : 17;
+                break;
+                case 27:
+                    state = (symbol == '"') ? 0 : 27;
+                break;
+                    
             }
-
             index++;
+        }
+        
+        if(state == 26) {
+            Analyzer.tokens.add(token);
         }
         return state;
     }
 
     static boolean isAcceptingState(int state){
-        List<Integer> acceptingStates = Arrays.asList(1, 4, 7, 8, 9, 11, 13, 16);
+        List<Integer> acceptingStates = Arrays.asList(1, 3, 4, 7, 8, 9, 11, 13, 16, 22, 26);
         for(Integer aState: acceptingStates) {
             if(state == aState){
                 return true;

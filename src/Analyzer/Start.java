@@ -294,7 +294,7 @@ public class Start extends javax.swing.JFrame {
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
         if( chooser == null ) chooser = new JFileChooser();
         
-        filter = new FileNameExtensionFilter("Archivos java", "java", "txt");
+        filter = new FileNameExtensionFilter("Archivos C", "C", "txt");
         chooser.setFileFilter(filter);
         chooser.setFileSelectionMode( JFileChooser.FILES_ONLY );
 
@@ -308,6 +308,7 @@ public class Start extends javax.swing.JFrame {
             openFile();
             editar.setEnabled(true);
             showErrors(analyzeFile(path));
+            Analyzer.printTokens();
         }
     }//GEN-LAST:event_abrirActionPerformed
 

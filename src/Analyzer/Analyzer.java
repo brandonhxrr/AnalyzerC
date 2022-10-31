@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Analyzer {
+    
+    public static List<String> tokens = new ArrayList<>();
+    
     public static List<Integer> analyzeFile(String path){
         String next;
         int line = 1, state, mlState = 0, ca = 0, cc = 0, lastState = 0;
@@ -15,12 +18,14 @@ public class Analyzer {
             File file = new File(path);
             Scanner sc = new Scanner(file);
             while(sc.hasNextLine()){
-
+                
                 next = Filter.filter(sc.nextLine());
 
                 if(!next.isBlank()){
 
                     state = Automata.validateString(next, mlState);
+                    
+                    //Validar comentario multilinea
 
                     mlState = state == 14 ? 14 : 0;
                     ca = ((state == 14 && lastState != 14) || (state == 16 && lastState != 14))? ca + 1 : ca;
@@ -54,6 +59,12 @@ public class Analyzer {
             System.out.println("No hay errores");
         }
 
+    }
+    
+    static void printTokens() {
+        for(String token : tokens) {
+            System.out.println(token);
+        }
     }
 
     public static void main(String[] args) {

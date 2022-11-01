@@ -216,7 +216,7 @@ public class Automata {
                     state = (Character.isDigit(symbol)) ? 26 : 17;
                 break;
                 case 27:
-                    state = (symbol == '"') ? 0 : 27;
+                    state = (symbol == '"') ? 22 : 27;
                 break;
                     
             }

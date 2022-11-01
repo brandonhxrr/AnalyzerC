@@ -11,7 +11,7 @@ public class Filter {
         System.out.println("STR: " + str);
         for(Character c: str.toCharArray()) {
             System.out.println("CHAR: " + c);
-            if(symbols.contains(c) || isSymbol(Character.toString(c))){
+            if((str.charAt(0) != '#' ) && (symbols.contains(c) || isSymbol(Character.toString(c)))){
                 Analyzer.tokens.add(Character.toString(c));
                 str =  str.replace(c, ' ');
             }

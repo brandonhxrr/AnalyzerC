@@ -6,12 +6,12 @@ import java.util.List;
 public class Filter {
     
     //Corregir y agregar a la lista de tokens
-    static String unresolvedWords(String str){
+    static String unresolvedWords(String str, char ini){
         List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', ',', ';');
         System.out.println("STR: " + str);
         for(Character c: str.toCharArray()) {
             System.out.println("CHAR: " + c);
-            if((str.charAt(0) != '#' ) && (symbols.contains(c) || isSymbol(Character.toString(c)))){
+            if((ini != '#' ) && (symbols.contains(c) || isSymbol(Character.toString(c)))){
                 Analyzer.tokens.add(Character.toString(c));
                 str =  str.replace(c, ' ');
             }
@@ -67,7 +67,7 @@ for (String kw: keywords) {
         StringBuilder newLine = new StringBuilder();
         String[] words = line.split(" ");
         for (String pal: words) {
-            String word = unresolvedWords(pal);
+            String word = (line.length() > 0) ? unresolvedWords(pal, line.charAt(0)) : unresolvedWords(pal, ' ');
             System.out.println("WORD11: " + word);
             if(!word.isBlank() && !isSymbol(word) && !isKeyword(word)){
                 //newLine.append(" ").append(unresolvedWords(word));

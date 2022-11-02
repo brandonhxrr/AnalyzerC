@@ -29,7 +29,7 @@ public class Automata {
                         state = 0;
                     }else if(symbol == ';') {
                         state = 22;
-                    }else if(symbol == '"') {
+                    }else if(symbol == '"' || symbol == '\'') {
                         state = 27;
                     }else if (Filter.isNumber(symbol, 10)){
                         state = 1;
@@ -216,7 +216,7 @@ public class Automata {
                     state = (Character.isDigit(symbol)) ? 26 : 17;
                 break;
                 case 27:
-                    state = (symbol == '"') ? 22 : 27;
+                    state = (symbol == '"' || symbol == '\'') ? 22 : 27;
                 break;
                     
             }

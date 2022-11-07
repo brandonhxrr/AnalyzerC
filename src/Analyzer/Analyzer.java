@@ -19,11 +19,14 @@ public class Analyzer {
             Scanner sc = new Scanner(file);
             while(sc.hasNextLine()){
                 
-                next = Filter.filter(sc.nextLine());
+                //next = Filter.filter(sc.nextLine());
+                next = sc.nextLine();
 
                 if(!next.isBlank()){
 
-                    state = Automata.validateString(next, mlState);
+                    //state = Automata.validateString(next, mlState);
+                    
+                    state = Automata6.validateString(next, mlState);
                     
                     //Validar comentario multilinea
 
@@ -33,7 +36,7 @@ public class Analyzer {
 
                     lastState = state;
 
-                    if(state != 14 && !Automata.isAcceptingState(state)) acceptingStates.add(line);
+                    if(state != 14 && !Automata6.isAcceptingState(state)) acceptingStates.add(line);
 
                     System.out.print(next + "\t");
                     System.out.println("Linea: " + line + " Estado: " + state);

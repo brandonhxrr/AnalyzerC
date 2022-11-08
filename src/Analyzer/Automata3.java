@@ -176,7 +176,7 @@ public class Automata3 {
         }
         
         if (state == 26) {
-            Analyzer.tokens.add(token);
+            //Analyzer.tokens.add(token);
         }
         return state;
     }

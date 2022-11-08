@@ -1,5 +1,6 @@
 package Analyzer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class Filter {
         for(Character c: str.toCharArray()) {
             System.out.println("CHAR: " + c);
             if((ini != '#' ) && (symbols.contains(c) || isSymbol(Character.toString(c)))){
-                Analyzer.tokens.add(Character.toString(c));
+               // Analyzer.tokens.add(Character.toString(c));
                 str =  str.replace(c, ' ');
             }
         }
@@ -156,7 +157,7 @@ for (String kw: keywords) {
         return state == 2;
     }
     
-    static boolean isID(String str) {
+    static boolean isID(String str){
         int index = 0, state = 0;
         while(index < str.length() ){
            char symbol = str.charAt(index);
@@ -205,5 +206,86 @@ for (String kw: keywords) {
             }
         }System.out.println("WORD: " + newLine);
         return String.valueOf(newLine).trim();
+    }
+    
+    public static void addToken(String token){
+        List<String> tok = new ArrayList<>();
+        
+        if(token.equals(" ") || token.isEmpty()){
+            
+        }else if(isLibrary(token)){
+            tok.add("Librería");
+            tok.add(token);
+            tok.add(token);
+        }else if(isSingleLineComment(token)){
+            tok.add("Comentario");
+            tok.add(token);
+            tok.add(token);
+        }else if(isKeyword(token)){
+            tok.add("Palabra reservada");
+            tok.add(token);
+            tok.add(token);
+            
+        }else if(isID(token)){
+            tok.add("Identificador");
+            tok.add(token);
+            tok.add(token);
+        }else if(isSymbol(token)){
+            tok.add("Símbolo");
+            tok.add(token);
+            tok.add(token);
+        }else if(isNumber(token)){
+            tok.add("Número entero");
+            tok.add(token);
+            tok.add(token);
+        }else if(isID(token.substring(0, token.length() - 1))){
+            tok.add("Identificador");
+            tok.add(token.substring(0, token.length() - 1));
+            tok.add(token.substring(0, token.length() - 1));
+            
+            addSymbol(Character.toString(token.charAt(token.length() - 1)));
+        }else if(isNumber(token.substring(0, token.length() - 1))){
+            tok.add("Número entero");
+            tok.add(token.substring(0, token.length() - 1));
+            tok.add(token.substring(0, token.length() - 1));
+            
+            addSymbol(Character.toString(token.charAt(token.length() - 1)));
+        }else if(token.charAt(token.length() - 2) == '"'){
+            tok.add("Cadena");
+            tok.add("\""+token.substring(0, token.length() - 1));
+            tok.add("\""+token.substring(0, token.length() - 1));
+            
+            addSymbol(Character.toString(token.charAt(token.length() - 1)));
+        }else if(isSymbol(Character.toString(token.charAt(token.length() - 1)))){
+            tok.add("Expresión");
+            tok.add(token.substring(0, token.length() - 1));
+            tok.add(token.substring(0, token.length() - 1));
+            
+            addSymbol(Character.toString(token.charAt(token.length() - 1)));
+        }else if((token.charAt(token.length() - 2) == '"') && (token.charAt(token.length() - 3) == ';')){
+            tok.add("Cadena");
+            tok.add("\""+token.substring(0, token.length() - 1));
+            tok.add("\""+token.substring(0, token.length() - 1));
+            
+            addSymbol(Character.toString(token.charAt(token.length() - 1)));
+            
+            addSymbol(";");
+        }else{
+            tok.add("Expresión");
+            tok.add(token);
+            tok.add(token);
+        }
+        Analyzer.tokens.add(tok);
+        
+    }
+    
+    public static void addSymbol(String token){
+         List<String> tok = new ArrayList<>();
+         if(isSymbol(token)){
+            tok.add("Símbolo");
+            tok.add(token);
+            tok.add(token);
+        }
+        Analyzer.tokens.add(tok);
     }
 }

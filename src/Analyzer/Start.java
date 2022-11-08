@@ -309,6 +309,7 @@ public class Start extends javax.swing.JFrame {
             editar.setEnabled(true);
             showErrors(analyzeFile(path));
             Analyzer.printTokens();
+            Analyzer.printErrors();
         }
     }//GEN-LAST:event_abrirActionPerformed
 

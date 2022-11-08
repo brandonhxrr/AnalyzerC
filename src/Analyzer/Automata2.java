@@ -191,7 +191,7 @@ public class Automata2 {
                             state = 21;
                         } else if (symbol == '>') {
                             state = 22;
-                            Analyzer.tokens.add(token);
+                            //Analyzer.tokens.add(token);
                             token = "";
                         }
                         break;
@@ -217,7 +217,7 @@ public class Automata2 {
                     case 25:
                         if (symbol == '"') {
                             state = 22;
-                            Analyzer.tokens.add(token);
+                            //Analyzer.tokens.add(token);
                         } else {
                             state = (Character.isLetterOrDigit(symbol) || symbol == '_') ? 25 : 17;
                         }
@@ -238,7 +238,7 @@ public class Automata2 {
         }
 
         if (state == 26) {
-            Analyzer.tokens.add(token);
+            //Analyzer.tokens.add(token);
         }
         return state;
     }

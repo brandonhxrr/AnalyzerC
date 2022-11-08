@@ -8,7 +8,8 @@ import java.util.Scanner;
 
 public class Analyzer {
     
-    public static List<String> tokens = new ArrayList<>();
+    public static List<List<String>> tokens = new ArrayList<>();
+    public static List<List<String>> errors = new ArrayList<>();
     
     public static List<Integer> analyzeFile(String path){
         String next;
@@ -26,7 +27,7 @@ public class Analyzer {
 
                     //state = Automata.validateString(next, mlState);
                     
-                    state = Automata6.validateString(next, mlState);
+                    state = Automata6.validateString(next, mlState, line);
                     
                     //Validar comentario multilinea
 
@@ -65,8 +66,24 @@ public class Analyzer {
     }
     
     static void printTokens() {
-        for(String token : tokens) {
-            System.out.println(token);
+        System.out.println("TOKENS: ");
+        for(List<String> tokenList : tokens) {
+            for(String token : tokenList ){
+                System.out.print(token + "\t");
+            }
+            System.out.println("");
+            
+        }
+    }
+    
+    static void printErrors() {
+        System.out.println("Errors: ");
+        for(List<String> tokenList : errors) {
+            for(String token : tokenList ){
+                System.out.print(token + "\t");
+            }
+            System.out.println("");
+            
         }
     }
 

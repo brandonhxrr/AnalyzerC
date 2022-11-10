@@ -6,241 +6,239 @@ import java.util.List;
 
 public class Automata {
 
-    static int validateString(String str, int initial){
+    //Función para validar una línea, retorna el estado del automáta
+    static int validateString(String str, int initial, int line) {
+        
+        //Quitar saltos de línea de la cadena
+        str = str.stripIndent().replace("\n", "");
 
         int state = initial, index = 0;
         char symbol;
-        
         String token = "";
-
-        while(index != (str.length() )){
-
-            symbol = str.charAt(index);
-            token += symbol;
-            System.out.println("Estado: " + state);
-
-            switch (state){
-                case 0:
-                    if(symbol == '0'){
-                        state = 3;
-                    }else if(symbol == '#') {
-                        state = 18;
-                    }else if(symbol == ' ') {
-                        state = 0;
-                    }else if(symbol == ';') {
-                        state = 22;
-                    }else if(symbol == '"' || symbol == '\'') {
-                        state = 27;
-                    }else if (Filter.isNumber(symbol, 10)){
-                        state = 1;
-                    }else if ( symbol == '+' || symbol == '-'){
-                        state = 2;
-                    }else if(symbol == '_'){
-                        state = 10;
-                    }else if(Character.isLetter(symbol) || symbol == '$'){
-                        state = 11;
-                    }else if(symbol == '/'){
-                        state = 12;
-                    }else{
-                        state = 17; // Dead state
-                    }
-                break;
-                case 1:
-                    if(symbol == '.'){
-                        state = 4;
-                    }else if(symbol == ' '){
-                        state = 0;
-                    }else if (!Filter.isNumber(symbol, 10)){
-                        state = 17;
-                    }
-                break;
-                case 2:
-                    if(symbol == '0'){
-                        state = 3;
-                    }else if (Filter.isNumber(symbol, 10)){
-                        state = 1;
-                    }else{
-                        state = 17;
-                    }
-                break;
-                case 3:
-                    if(symbol == 'x'){
-                        state = 9;
-                    }else if (symbol == '.'){
-                        state = 4;
-                    }else if(symbol == ' '){
-                        state = 0;
-                    }else if (Filter.isNumber(symbol, 8)){
-                        state = 8;
-                    }else{
-                        state = 17;
-                    }
-                break;
-                case 4:
-                    if(symbol == 'E'){
-                        state = 5;
-                    }else if(symbol == ' '){
-                        state = 0;
-                    }else if (!Filter.isNumber(symbol, 10)){
-                        state = 17;
-                    }
-                break;
-                case 5:
-                    if ( symbol == '+' || symbol == '-'){
-                        state = 6;
-                    }else if(Filter.isNumber(symbol, 10)){
-                        state = 7;
-                    }else{
-                        state = 17;
-                    }
-                break;
-                case 6:
-                case 7:
-                    if(symbol == ' '){
-                        state = 0;
-                    }else{
-                        state = !Filter.isNumber(symbol, 10) ? 17 : 7 ;
-                    }
-                break;
-                case 8:
-                    if(symbol == ' '){
-                        state = 0;
-                    }else{
-                        state = !Filter.isNumber(symbol, 8) ? 17 : 8 ;
-                    }
-                break;
-                case 9:
-                    if(symbol == ' '){
-                        state = 0;
-                    }else{
-                        state = !Filter.isNumber(symbol, 16) ? 17 : 9 ;
-                    }
-                break;
-                case 10:
-                case 11:
-                    if(symbol == ' '){
-                        state = 0;
-                    }else{
-                        System.out.println(symbol);
-                        state = (!Character.isLetterOrDigit(symbol) && symbol != '_' ) ? 17 : 11;
-                    }
-                break;
-                case 12:
-                    if(symbol == '/'){
-                        state = 13;
-                    }else if(symbol == '*'){
-                        state = 14;
-                    }
-                    break;
-                case 13:
-                case 17:
-                    break;
-                case 14:
-                    state = symbol == '*' ? 15 : 14 ;
-                break;
-                case 15:
-                    state = symbol == '/' ? 16 : 15 ;
-                break;
-                case 16:
-                    if(symbol == ' '){
-                        state = 0;
-                    }else{
-                        state = !Character.isWhitespace(symbol) ? 0 : 16 ;
-                    }
-                break;
-                case 18:
-                    System.out.println("Str: " + str + " index: " + index);
-                    
-                    if(str.contains("include")){
-                        index += 6;
-                        token += "nclude";
-                        state = 19;
-                    }else if(str.contains("define")){
-                        index += 5;
-                        token += "efine";
-                        state = 20;
-                    }
-                break;
-                case 19:
-                    if(symbol == '<'){
-                        state = 21;
-                    }else if(symbol == ' ') {
-                        state = 19;
-                    }else {
-                        state = 17;
-                    }
-                break;
-                case 20:
-                    System.out.println("/Str: " + str + " index: " + index);
-                    //validar identificador define
-                    state = (symbol == ' ') ? 23 : 17;
-                break;
-                case 21:
-                    if(Character.isAlphabetic(symbol)){
-                        state = 21;
-                    }else if(symbol == '>'){
-                        state = 22;
-                        //Analyzer.tokens.add(token);
-                        token = "";
-                    }
-                break;
-                case 22:
-                    System.out.println("ACEP");
-                break;
+        
+        //Lista para capturar el error en la línea si lo hay
+        List<String> error = new ArrayList<>();
+        
+        //Lista que contiene los símbolos que separan a un token
+        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', ',', ';', '"');
+        
+        //Validar si la linea es una librería valida o un comentario de una sola linea e ir a un estado de aceptación
+        if(Filter.isLibrary(str) || Filter.isSingleLineComment(str)){
+            state = 22;
+        }else {
+            //Recorrer la linea caracter por caracter
+            while(index < str.length() ){
                 
-                case 23:
-                    if( symbol == ' '){
-                        state = 24;
-                    }else {
-                        state = (Character.isLetterOrDigit(symbol) || symbol == '_' ) ? 23 : 17;
-                    }
+                //Asignar el simbolo al simbolo actual
+                symbol = str.charAt(index);
+                
+                //Agregar el simbolo al token
+                token += symbol;
+               
+                //Quitarespacios vacios del token
+                token = token.trim();
+                
+                //Agregar los tokens separandolos con los simbolos o espacio
+                if((symbol == ' ' || symbols.contains(symbol)) && (state != 5 && state != 6 && state != 17) ){
+                    System.out.println("TOKEN: " + token);
+                    Filter.addToken(token);
+                }
+                
+                //Switch para validar en que estado se encuentra el automata
+                switch(state) {
                     
-                break;
-                case 24:
-                    if(symbol == '"'){
-                        state = 25;
-                    }else if(Character.isDigit(symbol)) {
-                        state = 26;
-                    }
-                break;
-                case 25:
-                    if(symbol == '"') {
-                        state = 22;
-                        //Analyzer.tokens.add(token);
-                    }else {
-                        state = (Character.isLetterOrDigit(symbol) || symbol == '_' ) ? 25 : 17;
-                    }
-                    
+                    //Estado inicial
+                    case 0:
+                        //Separar el token por espacio o algun simbolo
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                            
+                            //Validaciones para decidir a que estado ir
+                            if(token.isEmpty()){
+                                state = 0;
+                            }else if(symbol == '"'){
+                                state = 5;
+                            }else if(symbol == ','){
+                                state = 0;
+                            }else if(Filter.isKeyword(token) || Filter.isKeyword(token.substring(0, token.length() - 1)) ){
+                                state = 1;
+                            }else if(Filter.isID(token) || Filter.isID(token.substring(0, token.length() - 1)) ){
+                                state = (symbol ==';') ? 22 : 2;
+                            }else if(symbols.contains(symbol)){
+                                state = 0;
+                            }else {
+                                state = 17;
+                                
+                                //En caso de haber algun error, agregarlo a la lista de errores
+                                error.add("Linea " + String.valueOf(line));
+                                error.add("Símbolo no válido");
+                                error.add(Character.toString(symbol));
+                            }
+                            
+                            //Resetear el token
+                            token = "";
+                        }
                     break;
-                case 26:
-                    state = (Character.isDigit(symbol)) ? 26 : 17;
-                break;
-                case 27:
-                    state = (symbol == '"' || symbol == '\'') ? 22 : 27;
-                break;
                     
+                    //Estado 1: Validar lo que llega después de una palabra reservada
+                    case 1:
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                            //System.out.println("TOKEN1: " + token);
+                            if(symbol == '(' || symbol == ',' || symbol == ')'){
+                                state = 0;
+                            }else if(symbol == '[' || symbol == ']'){
+                                state = 7;
+                            }else if(Filter.isKeyword(token.trim())){
+                                state = 1;
+                            }else if(symbol == ';') {
+                                state = 22;
+                            }else if(Filter.isID(token.trim()) || Filter.isID(token.substring(0, token.length() - 1)) ){
+                                state = 2;
+                            }else{
+                                
+                            }
+                            
+                            token = "";
+                            
+                        }
+                    break;
+                    
+                    //Estado 2: Validar lo que llega después de un identificador
+                    case 2:
+                        
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                            //System.out.println("TOKEN2: " + token);
+                            if("=".equals(token)){
+                                state = 3;
+                            }else if(symbol == ';'){
+                                state = 22;
+                            }else if("\"".equals(token)){
+                                state = 5;
+                            }else if(Filter.isSymbol(token) && symbol != '('){
+                                state = 1;
+                            }else if(Filter.isSymbol(Character.toString(symbol)) && symbol != '('){
+                                state = 3;
+                            }else if(symbol == ' '){
+                                state = 2;
+                            }else if("(".equals(token)){
+                                state = 3;
+                            }else if(Filter.isID(token.trim()) || Filter.isID(token.substring(0, token.length() - 1)) ){
+                                state = 17;
+                                
+                                error.add("Linea " + String.valueOf(line));
+                                error.add("Identificador no válido");
+                                error.add("");
+                            }else{
+                                state = 17;
+                                
+                                error.add("Linea " + String.valueOf(line));
+                                error.add("Símbolo no válido");
+                                error.add(token);
+                            }
+                            
+                            token = "";
+                        }
+                    break;
+                
+                    //Estado 3: Validar lo que llega después de un = en una expresión
+                    case 3:
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                            //System.out.println("TOKEN3: " + token);
+                            if(Filter.isID(token.trim()) || Filter.isNumber(token.trim())){
+                                state = 4;
+                            }else if(symbol == ')' || symbol == '('){
+                                state = 0;
+                            }else if(symbol == '[' || symbol == ']'){
+                                state = 3 ;
+                            }else if(symbol == ';'){
+                                state = 0;
+                            }else if(symbol == '"'){
+                                state = 5;
+                            }else if(symbol == '\''){
+                                state = 6;
+                            }else if(symbol == ','){
+                                state = 0;
+                            }else {
+                                state = 17;
+                                
+                                error.add("Linea " + String.valueOf(line));
+                                error.add("Símbolo no válido");
+                                error.add(Character.toString(symbol));
+                            }
+                            
+                            token = "";
+                        }
+                    break;
+                    
+                    //Validar lo que le llega después de una expresión de tipo int a = 10
+                    // puede llegar un ;, un parentesis, una coma o algún simbolo
+                    case 4:
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                           
+                            if(Filter.isSymbol(token.trim())){
+                                state = 3;
+                            }else if(symbol == ';'){
+                                state = 22;
+                            }else if(symbol == ')'){
+                                state = 0;
+                            }else if(symbol == ','){
+                                state = 0;
+                            }else {
+                                state = 17;
+                                
+                                error.add("Linea " + String.valueOf(line));
+                                error.add("Símbolo no válido");
+                                error.add(Character.toString(symbol));
+                            }
+                            
+                            token = "";
+                        }
+                    break;
+                    
+                    //Estado 5: Validar una cadena con comillas dobles
+                    case 5:
+                        state = (symbol == '"') ? 4 : 5;
+                    break;
+                    
+                    //Estado 6: Validar una cadena con comillas simples
+                    case 6:
+                        state = (symbol == '\'') ? 4 : 6;
+                    break;
+                    
+                    //Estado 7: Validar si despues de llaves le lleva un identificador o un punto y coma
+                    case 7:
+                        if(symbol == ' ' || symbols.contains(symbol)){
+                            
+                            if(Filter.isID(token)){
+                                state = 2;
+                            }else if(symbol == ';'){
+                                state = 8;
+                            }
+                            
+                            token = "";
+                        }
+                    break;  
+                    case 8:
+                    break;
+                }
+                index++;
             }
-            index++;
         }
         
-        if(state == 26) {
-            //Analyzer.tokens.add(token);
-        }
+        //Agregar los errores que hayan surgido a la lista de errores
+        Analyzer.errors.add(error);
         return state;
     }
 
-    static boolean isAcceptingState(int state){
-        List<Integer> acceptingStates = Arrays.asList(1, 3, 4, 7, 8, 9, 11, 13, 16, 22, 26);
-        for(Integer aState: acceptingStates) {
-            if(state == aState){
+    //Validar que el estado recibido sea un estado de aceptación
+    //  con el fin de validar que líneas son aceptadas y cuales no
+    static boolean isAcceptingState(int state) {
+        List < Integer > acceptingStates = Arrays.asList(0, 1, 7, 8, 22);
+        for (Integer aState: acceptingStates) {
+            if (state == aState) {
                 return true;
             }
         }
         return false;
     }
 
-    public static void main(String[] args){
-        //Tests
-
-    }
 }

@@ -292,6 +292,8 @@ public class Start extends javax.swing.JFrame {
     }//GEN-LAST:event_abrirMouseExited
 
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
+        //Lanzar el fileChooser para poder elegir un archivo con extensión C o txt
+        
         if( chooser == null ) chooser = new JFileChooser();
         
         filter = new FileNameExtensionFilter("Archivos C", "C", "txt");
@@ -307,6 +309,8 @@ public class Start extends javax.swing.JFrame {
             path = file.getAbsolutePath();
             openFile();
             editar.setEnabled(true);
+            
+            //Llamar a las funciones que analizan el archivo
             showErrors(analyzeFile(path));
             Analyzer.printTokens();
             Analyzer.printErrors();
@@ -375,9 +379,14 @@ public class Start extends javax.swing.JFrame {
     }//GEN-LAST:event_checkMouseExited
 
     private void checkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkActionPerformed
+        //Después de editar un archivo, se puede llamar al boton para checar el archivo e imprimir 
+        // tokens y errores
         showErrors(analyzeFile(path));
+        Analyzer.printTokens();
+        Analyzer.printErrors();
     }//GEN-LAST:event_checkActionPerformed
 
+    //Mostrar errores en la interfaz grafica
     void showErrors(List<Integer> errors){
         errorsPanel.setText("");
         errorsCounter.setText("Salida");
@@ -391,6 +400,7 @@ public class Start extends javax.swing.JFrame {
         }
     }
     
+    //Abrir un archivo
     void openFile(){
         String next;
         code = "";

@@ -5,283 +5,242 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Filter {
-    
-    //Corregir y agregar a la lista de tokens
-    static String unresolvedWords(String str, char ini){
-        List<Character> symbols = Arrays.asList('(', ')', '{', '}', '[', ']', ',', ';');
-        System.out.println("STR: " + str);
-        for(Character c: str.toCharArray()) {
-            System.out.println("CHAR: " + c);
-            if((ini != '#' ) && (symbols.contains(c) || isSymbol(Character.toString(c)))){
-               // Analyzer.tokens.add(Character.toString(c));
-                str =  str.replace(c, ' ');
-            }
-        }
-        return str;
-    }
-    
-    static boolean isNumber(String str){
-        for(Character c : str.toCharArray()){
-            if(!Character.isDigit(c)){
+
+    //Validar que una cadena esté compuesta solo por números
+    static boolean isNumber(String str) {
+        for (Character c: str.toCharArray()) {
+            if (!Character.isDigit(c)) {
                 return false;
             }
         }
         return true;
     }
 
-    static boolean isSymbol(String str){
-        List<String> symbols = Arrays.asList("(", ")", "{", "}", "[", "]", "=", "+", "-",
-                "/", "*", "&", "|", "!", ">", "<", "++", "--", "*=", "+=", "-=", "/=", ">=", "<=",
-                "=*", "=+", "=-", "=/", ",", "%", "<<", ">>", "&&", "||", "==", "!=",
-                "<=", ">=");
-        for(String symbol: symbols) {
-            if(str.equals(symbol)){
+    //Validar que una cadena sea uno de los simbolos de la lista
+    static boolean isSymbol(String str) {
+        List < String > symbols = Arrays.asList("(", ")", "{", "}", "[", "]", "=", "+", "-",
+            "/", "*", "&", "|", "!", ">", "<", "++", "--", "*=", "+=", "-=", "/=", ">=", "<=",
+            "=*", "=+", "=-", "=/", ",", "%", "<<", ">>", "&&", "||", "==", "!=",
+            "<=", ">=");
+        for (String symbol: symbols) {
+            if (str.equals(symbol)) {
                 return true;
             }
         }
         return false;
     }
-    static boolean isKeyword(String str){
-        List<String> keywords = Arrays.asList("auto","else", "long", "switch","break", 
-                "enum", "register", "typedef","case", "exter", "union",
-                "char", "float", "short", "unsigned","const", "for", "signed", "void",
-                "continue", "goto", "sizeof", "volatile", "default", "if", "static",
-                "while","do", "int", "struct", "_Packed","double", "return");
-for (String kw: keywords) {
-            if(str.equals(kw)){
+
+    //Validar que una cadena sea alguna de las palabras reservadas de la lista
+    static boolean isKeyword(String str) {
+        List < String > keywords = Arrays.asList("auto", "else", "long", "switch", "break",
+            "enum", "register", "typedef", "case", "exter", "union",
+            "char", "float", "short", "unsigned", "const", "for", "signed", "void",
+            "continue", "goto", "sizeof", "volatile", "default", "if", "static",
+            "while", "do", "int", "struct", "_Packed", "double", "return");
+        for (String kw: keywords) {
+            if (str.equals(kw)) {
                 return true;
             }
         }
         return false;
     }
-    
+
+    //Automata para validar si una linea es una definición de libreria o define
     static boolean isLibrary(String str) {
         int index = 0, state = 0;
-        while(index < str.length() ){
+        while (index < str.length()) {
             char symbol = str.charAt(index);
-            switch(state) {
-                case 0:
-                    state = (symbol == '#') ? 1 : 17;
+            switch (state) {
+            case 0:
+                state = (symbol == '#') ? 1 : 17;
                 break;
-                case 1:
-                    if("include".equals(str.substring(1, 8))){
-                        state = 2;
-                        index += 6;
-                    }else if("define".equals(str.substring(1, 7))){
-                        state = 6;
-                        index += 5;
-                    }
+            case 1:
+                if ("include".equals(str.substring(1, 8))) {
+                    state = 2;
+                    index += 6;
+                } else if ("define".equals(str.substring(1, 7))) {
+                    state = 6;
+                    index += 5;
+                }
                 break;
-                case 2:
-                    if(symbol == '<'){
-                        state = 3;
-                    }else if(symbol == ' ') {
-                        state = 2;
-                    }else {
-                        state = 17;
-                    }
+            case 2:
+                if (symbol == '<') {
+                    state = 3;
+                } else if (symbol == ' ') {
+                    state = 2;
+                } else {
+                    state = 17;
+                }
                 break;
-                case 3:
-                    if(Character.isAlphabetic(symbol)){
-                        state = 3;
-                    }else if(symbol == '.'){
-                        state = 4;
-                    }
+            case 3:
+                if (Character.isAlphabetic(symbol)) {
+                    state = 3;
+                } else if (symbol == '.') {
+                    state = 4;
+                }
                 break;
-                case 4:
-                    if(Character.isAlphabetic(symbol)){
-                        state = 4;
-                    }else if(symbol == '>'){
-                        state = 5;
-                    }
+            case 4:
+                if (Character.isAlphabetic(symbol)) {
+                    state = 4;
+                } else if (symbol == '>') {
+                    state = 5;
+                }
                 break;
-                case 5:
+            case 5:
                 break;
-                case 6:
-                    if(symbol == ' ') {
-                        state = 6;
-                    }else if(Character.isAlphabetic(symbol) || symbol == '_') {
-                        state = 7;
-                    }
+            case 6:
+                if (symbol == ' ') {
+                    state = 6;
+                } else if (Character.isAlphabetic(symbol) || symbol == '_') {
+                    state = 7;
+                }
                 break;
-                case 7:
-                    if(Character.isLetterOrDigit(symbol) || symbol == '_') {
-                        state = 7;
-                    }else if(symbol == ' '){
-                        state = 8;
-                    }
+            case 7:
+                if (Character.isLetterOrDigit(symbol) || symbol == '_') {
+                    state = 7;
+                } else if (symbol == ' ') {
+                    state = 8;
+                }
                 break;
-                case 8:
-                    if(Character.isDigit(symbol)){
-                        state = 9;
-                    }else if(symbol == '"') {
-                        state = 10;
-                    }
+            case 8:
+                if (Character.isDigit(symbol)) {
+                    state = 9;
+                } else if (symbol == '"') {
+                    state = 10;
+                }
                 break;
-                case 9:
-                    state = (Character.isDigit(symbol)) ? 9 : 17;
+            case 9:
+                state = (Character.isDigit(symbol)) ? 9 : 17;
                 break;
-                case 10:
-                    state = (symbol == '"') ? 11 : 10;
+            case 10:
+                state = (symbol == '"') ? 11 : 10;
                 break;
-                case 11:
+            case 11:
                 break;
             }
-            
+
             index++;
         }
-        
-        //System.out.println("LIB: " + state);
+
         return (state == 5 || state == 9 || state == 11);
     }
     
+    //Automata para validar si una linea es un comentario de una sola línea
     static boolean isSingleLineComment(String str) {
         int index = 0, state = 0;
-        while(index < str.length() ){
+        while (index < str.length()) {
             char symbol = str.charAt(index);
-            switch(state) {
-                case 0:
-                    state = (symbol == '/') ? 1 : 17;
+            switch (state) {
+            case 0:
+                state = (symbol == '/') ? 1 : 17;
                 break;
-                case 1:
-                    state = (symbol == '/') ? 2 : 17;
+            case 1:
+                state = (symbol == '/') ? 2 : 17;
                 break;
-                case 2:
-                break;                    
-           }
-            
+            case 2:
+                break;
+            }
+
             index++;
-            
-            //System.out.println("SLC: " + state);
         }
         return state == 2;
     }
-    
-    static boolean isID(String str){
+
+    //Automata para validar si la cadena es un identificador valido
+    static boolean isID(String str) {
         int index = 0, state = 0;
-        while(index < str.length() ){
-           char symbol = str.charAt(index);
-           switch(state) {
-               case 0:
-                    state = (Character.isLetter(symbol) || symbol == '_' || symbol == '*') ? 1 : 17;
-               break;
-               case 1:
-                   state = (Character.isLetterOrDigit(symbol) || symbol == '_') ? 1 : 17;
-               break;            
-           }
-           
-           index++;
+        while (index < str.length()) {
+            char symbol = str.charAt(index);
+            switch (state) {
+            case 0:
+                state = (Character.isLetter(symbol) || symbol == '_' || symbol == '*') ? 1 : 17;
+                break;
+            case 1:
+                state = (Character.isLetterOrDigit(symbol) || symbol == '_') ? 1 : 17;
+                break;
+            }
+
+            index++;
         }
         return state == 1;
     }
 
-    static String convert(int num, int base){
-        int x = num % base;
-        String digits = "0123456789ABCDEF";
-        int rest = (int) num / base;
-        if(rest == 0){
-            return String.valueOf(digits.charAt(x));
-        }
-        return convert(rest, base) + digits.charAt(x);
-    }
+    //Función para agregar un token a la lista de token junto con su descripción según el tipo de token
+    public static void addToken(String token) {
+        List < String > tok = new ArrayList < > ();
 
-    static boolean isNumber(char n, int limit){
-        for (int i = 0; i < limit; i++) {
-            if(convert(i, limit).equals(String.valueOf(n))){
-                return true;
-            }
-        }
-        return false;
-    }
+        if (token.equals(" ") || token.isEmpty()) {
 
-    public static String filter(String line){
-        StringBuilder newLine = new StringBuilder();
-        String[] words = line.split(" ");
-        for (String pal: words) {
-            String word = (line.length() > 0) ? unresolvedWords(pal, line.charAt(0)) : unresolvedWords(pal, ' ');
-            System.out.println("WORD11: " + word);
-            if(!word.isBlank() && !isSymbol(word) && !isKeyword(word)){
-                //newLine.append(" ").append(unresolvedWords(word));
-                newLine.append(" ").append(word);
-            }
-        }System.out.println("WORD: " + newLine);
-        return String.valueOf(newLine).trim();
-    }
-    
-    public static void addToken(String token){
-        List<String> tok = new ArrayList<>();
-        
-        if(token.equals(" ") || token.isEmpty()){
-            
-        }else if(isLibrary(token)){
-            tok.add("Librería");
-            tok.add(token);
-            tok.add(token);
-        }else if(isSingleLineComment(token)){
+        } else if (isLibrary(token)) {
+            tok.add("Librería");//Componente léxico
+            tok.add(token); //Lexema
+            tok.add(token); //Valor
+        } else if (isSingleLineComment(token)) {
             tok.add("Comentario");
             tok.add(token);
             tok.add(token);
-        }else if(isKeyword(token)){
+        } else if (isKeyword(token)) {
             tok.add("Palabra reservada");
             tok.add(token);
             tok.add(token);
-            
-        }else if(isID(token)){
+
+        } else if (isID(token)) {
             tok.add("Identificador");
             tok.add(token);
             tok.add(token);
-        }else if(isSymbol(token)){
+        } else if (isSymbol(token)) {
             tok.add("Símbolo");
             tok.add(token);
             tok.add(token);
-        }else if(isNumber(token)){
+        } else if (isNumber(token)) {
             tok.add("Número entero");
             tok.add(token);
             tok.add(token);
-        }else if(isID(token.substring(0, token.length() - 1))){
+        } else if (isID(token.substring(0, token.length() - 1))) {
             tok.add("Identificador");
             tok.add(token.substring(0, token.length() - 1));
             tok.add(token.substring(0, token.length() - 1));
-            
+
             addSymbol(Character.toString(token.charAt(token.length() - 1)));
-        }else if(isNumber(token.substring(0, token.length() - 1))){
+        } else if (isNumber(token.substring(0, token.length() - 1))) {
             tok.add("Número entero");
             tok.add(token.substring(0, token.length() - 1));
             tok.add(token.substring(0, token.length() - 1));
-            
+
             addSymbol(Character.toString(token.charAt(token.length() - 1)));
-        }else if(token.charAt(token.length() - 2) == '"'){
+        } else if (token.charAt(token.length() - 2) == '"') {
             tok.add("Cadena");
-            tok.add("\""+token.substring(0, token.length() - 1));
-            tok.add("\""+token.substring(0, token.length() - 1));
-            
+            tok.add("\"" + token.substring(0, token.length() - 1));
+            tok.add("\"" + token.substring(0, token.length() - 1));
+
             addSymbol(Character.toString(token.charAt(token.length() - 1)));
-        }else if(isSymbol(Character.toString(token.charAt(token.length() - 1)))){
+        } else if (isSymbol(Character.toString(token.charAt(token.length() - 1)))) {
             tok.add("Expresión");
             tok.add(token.substring(0, token.length() - 1));
             tok.add(token.substring(0, token.length() - 1));
-            
+
             addSymbol(Character.toString(token.charAt(token.length() - 1)));
-        }else if((token.charAt(token.length() - 2) == '"') && (token.charAt(token.length() - 3) == ';')){
+        } else if ((token.charAt(token.length() - 2) == '"') && (token.charAt(token.length() - 3) == ';')) {
             tok.add("Cadena");
-            tok.add("\""+token.substring(0, token.length() - 1));
-            tok.add("\""+token.substring(0, token.length() - 1));
-            
+            tok.add("\"" + token.substring(0, token.length() - 1));
+            tok.add("\"" + token.substring(0, token.length() - 1));
+
             addSymbol(Character.toString(token.charAt(token.length() - 1)));
-            
+
             addSymbol(";");
-        }else{
+        } else {
             tok.add("Expresión");
             tok.add(token);
             tok.add(token);
         }
         Analyzer.tokens.add(tok);
-        
+
     }
-    
-    public static void addSymbol(String token){
-         List<String> tok = new ArrayList<>();
-         if(isSymbol(token)){
+
+    //Función para añadir un simbolo a la lista de tokens
+    public static void addSymbol(String token) {
+        List < String > tok = new ArrayList < > ();
+        if (isSymbol(token)) {
             tok.add("Símbolo");
             tok.add(token);
             tok.add(token);
